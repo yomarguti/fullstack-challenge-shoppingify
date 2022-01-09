@@ -7,7 +7,8 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateItemDto } from './dtos/create-item.dto';
+import { CreateItemDto, UpdateItemDto } from './dtos/create-item.dto';
+import { Item } from './item.entity';
 import { ItemsService } from './item.service';
 
 @Controller('items')
@@ -15,28 +16,30 @@ export class ItemsController {
   constructor(private itemsService: ItemsService) {}
 
   @Get()
-  findAll(): string {
-    return 'Item1, Item2, Item3';
+  findAll(): Promise<Item[]> {
+    return this.itemsService.findAll();
   }
 
   @Get('/:id')
-  findById(@Param('id') id: string): string {
-    return `Item ${id}`;
+  findById(@Param('id') id: string): Promise<Item> {
+    return this.itemsService.findById(id);
   }
 
   @Post()
-  createItem(@Body() createItemDto: CreateItemDto) {
+  createItem(@Body() createItemDto: CreateItemDto): Promise<Item> {
     return this.itemsService.createItem(createItemDto);
   }
 
   @Patch('/:id')
-  updateItem(@Param('id') id: string, itemData: string): string {
-    console.log('itemData:', itemData);
-    return `Item ${id} updated`;
+  updateItem(
+    @Param('id') id: string,
+    @Body() updateItemDto: UpdateItemDto,
+  ): Promise<Item> {
+    return this.itemsService.updateItem(id, updateItemDto);
   }
 
   @Delete('/:id')
-  deleteItem(@Param('id') id: string): string {
-    return `Item ${id} deleted`;
+  deleteItem(@Param('id') id: string): Promise<Boolean> {
+    return this.itemsService.delete(id);
   }
 }

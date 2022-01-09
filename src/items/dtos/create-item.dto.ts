@@ -1,3 +1,4 @@
+import { PartialType } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class CreateItemDto {
@@ -11,3 +12,5 @@ export class CreateItemDto {
   @IsInt()
   stock: number;
 }
+
+export class UpdateItemDto extends PartialType(CreateItemDto) {}
