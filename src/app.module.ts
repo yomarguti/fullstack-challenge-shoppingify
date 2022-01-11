@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { configValidationSchema } from './config.schema';
 import { ItemsModule } from './items/items.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ItemsModule } from './items/items.module';
       },
     }),
     ItemsModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
