@@ -16,7 +16,7 @@ export class ItemsController {
   constructor(private itemsService: ItemsService) {}
 
   @Get()
-  findAll(): Promise<Item[]> {
+  findAll() {
     return this.itemsService.findAll();
   }
 

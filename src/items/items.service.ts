@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { createQueryBuilder, Repository } from 'typeorm';
+import { CategoriesService } from '../categories/categories.service';
 import { CreateItemDto, UpdateItemDto } from './item.dto';
 import { Item } from './item.entity';
 
@@ -8,10 +9,16 @@ import { Item } from './item.entity';
 export class ItemsService {
   constructor(
     @InjectRepository(Item) private itemsRepository: Repository<Item>,
+    private categoriesService: CategoriesService,
   ) {}
 
-  findAll(): Promise<Item[]> {
-    return this.itemsRepository.find();
+  async findAll() {
+    return await this.itemsRepository
+      .createQueryBuilder()
+      .leftJoinAndSelect('item.categoryId', 'category')
+      .select('*')
+      .getRawMany();
+    //return this.itemsRepository.find();
   }
 
   async findById(id: string): Promise<Item> {
@@ -22,13 +29,35 @@ export class ItemsService {
 
   async createItem(createItemDto: CreateItemDto): Promise<Item> {
     const item = this.itemsRepository.create(createItemDto);
+    const category = await this.categoriesService.findById(
+      createItemDto.categoryId,
+    );
+
+    if (!category) {
+      throw new NotFoundException('You need to provide a valid category');
+    }
+
+    item.category = category;
+
     await this.itemsRepository.save(item);
     return item;
   }
 
   async updateItem(id: string, updateItemDto: UpdateItemDto): Promise<Item> {
+    const { categoryId } = updateItemDto;
+
     const item = await this.findById(id);
     this.itemsRepository.merge(item, updateItemDto);
+
+    if (categoryId) {
+      const category = await this.categoriesService.findById(categoryId);
+      if (!category) {
+        throw new NotFoundException('You need to provide a valid category');
+      }
+
+      item.category = category;
+    }
+
     return this.itemsRepository.save(item);
   }
 
