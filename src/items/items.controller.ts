@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -21,7 +22,7 @@ export class ItemsController {
   }
 
   @Get('/:id')
-  findById(@Param('id') id: string): Promise<Item> {
+  findById(@Param('id', ParseIntPipe) id: number): Promise<Item> {
     return this.itemsService.findById(id);
   }
 
@@ -32,14 +33,14 @@ export class ItemsController {
 
   @Patch('/:id')
   updateItem(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateItemDto: UpdateItemDto,
   ): Promise<Item> {
     return this.itemsService.updateItem(id, updateItemDto);
   }
 
   @Delete('/:id')
-  deleteItem(@Param('id') id: string): Promise<Boolean> {
+  deleteItem(@Param('id', ParseIntPipe) id: number): Promise<Boolean> {
     return this.itemsService.delete(id);
   }
 }

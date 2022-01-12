@@ -13,8 +13,8 @@ export class CreateItemDto {
   stock: number;
 
   @IsUUID('all')
-  @IsNotEmpty()
-  categoryId: string;
+  @IsInt()
+  categoryId: number;
 }
 
 export class UpdateItemDto extends PartialType(CreateItemDto) {}

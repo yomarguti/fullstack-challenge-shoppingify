@@ -1,14 +1,27 @@
+import {
+  AutoIncrement,
+  Column,
+  DataType,
+  HasMany,
+  PrimaryKey,
+  Table,
+  Unique,
+  Model,
+} from 'sequelize-typescript';
+
 import { Item } from 'src/items/item.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class Category {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+@Table
+export class Category extends Model {
+  @AutoIncrement
+  @Unique(true)
+  @PrimaryKey
+  @Column({ type: DataType.INTEGER })
+  id: number;
 
-  @Column()
+  @Column({ type: DataType.STRING })
   name: string;
 
-  @OneToMany((type) => Item, (item) => item.category, { eager: false })
+  @HasMany(() => Item)
   items: Item[];
 }

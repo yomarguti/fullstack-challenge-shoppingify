@@ -1,71 +1,50 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createQueryBuilder, Repository } from 'typeorm';
-import { CategoriesService } from '../categories/categories.service';
+import { Category } from '../categories/category.entity';
+//import { CategoriesService } from '../categories/categories.service';
 import { CreateItemDto, UpdateItemDto } from './item.dto';
 import { Item } from './item.entity';
 
 @Injectable()
 export class ItemsService {
   constructor(
-    @InjectRepository(Item) private itemsRepository: Repository<Item>,
-    private categoriesService: CategoriesService,
+    @Inject('ITEMS_REPOSITORY') private itemsRepository: typeof Item,
   ) {}
 
-  async findAll() {
-    /*     return await this.itemsRepository
-      .createQueryBuilder('item')
-      .leftJoin('item.category', 'category')
-      .groupBy('category.name')
-      .addGroupBy('category.id')
-      .addGroupBy('item.id')
-      .getRawMany(); */
-    return this.itemsRepository.find();
+  async findAll(): Promise<Item[]> {
+    return this.itemsRepository.findAll<Item>();
   }
 
-  async findById(id: string): Promise<Item> {
-    const item = await this.itemsRepository.findOne(id);
+  async findById(id: number): Promise<Item> {
+    const item = await this.itemsRepository.findByPk(id);
     if (!item) throw new NotFoundException();
     return item;
   }
 
   async createItem(createItemDto: CreateItemDto): Promise<Item> {
-    const item = this.itemsRepository.create(createItemDto);
-    const category = await this.categoriesService.findById(
-      createItemDto.categoryId,
-    );
-
-    if (!category) {
+    try {
+      const item = await this.itemsRepository.create(createItemDto);
+      return item;
+    } catch (error) {
       throw new NotFoundException('You need to provide a valid category');
     }
+  }
 
-    item.category = category;
-
-    await this.itemsRepository.save(item);
+  async updateItem(id: number, updateItemDto: UpdateItemDto): Promise<Item> {
+    const [affectedRows, [item]] = await this.itemsRepository.update(
+      updateItemDto,
+      { where: { id }, returning: true },
+    );
+    if (!affectedRows) {
+      throw new NotFoundException('You need to provide a valid category');
+    }
     return item;
   }
 
-  async updateItem(id: string, updateItemDto: UpdateItemDto): Promise<Item> {
-    const { categoryId } = updateItemDto;
-
-    const item = await this.findById(id);
-    this.itemsRepository.merge(item, updateItemDto);
-
-    if (categoryId) {
-      const category = await this.categoriesService.findById(categoryId);
-      if (!category) {
-        throw new NotFoundException('You need to provide a valid category');
-      }
-
-      item.category = category;
-    }
-
-    return this.itemsRepository.save(item);
-  }
-
-  async delete(id: string): Promise<Boolean> {
-    const { affected } = await this.itemsRepository.delete(id);
-    if (!affected) throw new NotFoundException();
+  async delete(id: number): Promise<Boolean> {
+    const affected = await this.itemsRepository.destroy({ where: { id } });
+    if (!affected) throw new NotFoundException('No item was deleted!');
 
     return true;
   }

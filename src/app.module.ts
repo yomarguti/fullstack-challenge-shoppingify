@@ -1,19 +1,23 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { configValidationSchema } from './config.schema';
 import { ItemsModule } from './items/items.module';
 import { CategoriesModule } from './categories/categories.module';
+import { DatabaseModule } from './database-module/database.module';
 
 @Module({
-  imports: [
+  imports: [DatabaseModule, ItemsModule, CategoriesModule],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+/*
     ConfigModule.forRoot({
       envFilePath: [`.env.dev`],
       validationSchema: configValidationSchema,
     }),
-    TypeOrmModule.forRootAsync({
+     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
@@ -33,11 +37,4 @@ import { CategoriesModule } from './categories/categories.module';
           database: configService.get('DATABASE_NAME'),
         };
       },
-    }),
-    ItemsModule,
-    CategoriesModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
+    }), */

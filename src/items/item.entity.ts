@@ -1,20 +1,28 @@
-import { Category } from 'src/categories/category.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { Category } from '../categories/category.entity';
 
-@Entity()
-export class Item {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column()
+@Table
+export class Item extends Model {
+  @Column
   title: string;
 
-  @Column({ type: 'float' })
+  @Column({ type: DataType.REAL })
   price: number;
 
-  @Column()
+  @Column({ type: DataType.INTEGER })
   stock: number;
 
-  @ManyToOne((type) => Category, (category) => category.items, { eager: true })
+  @ForeignKey(() => Category)
+  @Column
+  categoryId: number;
+
+  @BelongsTo(() => Category)
   category: Category;
 }
