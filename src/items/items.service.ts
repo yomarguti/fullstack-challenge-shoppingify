@@ -13,12 +13,14 @@ export class ItemsService {
   ) {}
 
   async findAll() {
-    return await this.itemsRepository
-      .createQueryBuilder()
-      .leftJoinAndSelect('item.categoryId', 'category')
-      .select('*')
-      .getRawMany();
-    //return this.itemsRepository.find();
+    /*     return await this.itemsRepository
+      .createQueryBuilder('item')
+      .leftJoin('item.category', 'category')
+      .groupBy('category.name')
+      .addGroupBy('category.id')
+      .addGroupBy('item.id')
+      .getRawMany(); */
+    return this.itemsRepository.find();
   }
 
   async findById(id: string): Promise<Item> {
