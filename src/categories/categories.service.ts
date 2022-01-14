@@ -24,7 +24,7 @@ export class CategoriesService {
       include: [
         {
           model: Item,
-          limit: 2,
+          limit: 8,
         },
       ],
     });
