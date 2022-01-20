@@ -11,13 +11,13 @@ import { Category } from '../categories/category.entity';
 @Table
 export class Item extends Model {
   @Column
-  title: string;
+  name: string;
 
-  @Column({ type: DataType.REAL })
-  price: number;
+  @Column({ type: DataType.STRING })
+  note?: string;
 
-  @Column({ type: DataType.INTEGER })
-  stock: number;
+  @Column({ type: DataType.STRING })
+  image?: string;
 
   @ForeignKey(() => Category)
   @Column

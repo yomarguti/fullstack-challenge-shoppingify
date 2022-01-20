@@ -19,6 +19,10 @@ export class CategoriesService {
   }
 
   findAll(): Promise<Category[]> {
+    return this.categoriesRepository.findAll();
+  }
+
+  findItemsGroupByCategories(): Promise<Category[]> {
     return this.categoriesRepository.findAll({
       limit: 4,
       include: [

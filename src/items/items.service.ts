@@ -1,8 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { createQueryBuilder, Repository } from 'typeorm';
+import { CategoriesService } from '../categories/categories.service';
 import { Category } from '../categories/category.entity';
-//import { CategoriesService } from '../categories/categories.service';
 import { CreateItemDto, UpdateItemDto } from './item.dto';
 import { Item } from './item.entity';
 

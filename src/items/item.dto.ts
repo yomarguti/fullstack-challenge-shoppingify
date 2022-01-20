@@ -1,16 +1,16 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsUrl, IsUUID } from 'class-validator';
 
 export class CreateItemDto {
   @IsNotEmpty()
-  title: string;
+  name: string;
 
-  @IsNotEmpty()
-  price: number;
+  @IsOptional()
+  note: string;
 
-  @IsNotEmpty()
-  @IsInt()
-  stock: number;
+  @IsOptional()
+  @IsUrl()
+  image: string;
 
   @IsUUID('all')
   @IsInt()
