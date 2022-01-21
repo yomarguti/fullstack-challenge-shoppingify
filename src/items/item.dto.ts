@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsOptional, IsUrl, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 
 export class CreateItemDto {
   @IsNotEmpty()
@@ -12,9 +12,8 @@ export class CreateItemDto {
   @IsUrl()
   image: string;
 
-  @IsUUID('all')
-  @IsInt()
-  categoryId: number;
+  @IsNotEmpty()
+  category: number | string;
 }
 
 export class UpdateItemDto extends PartialType(CreateItemDto) {}

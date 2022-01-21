@@ -1,6 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CategoriesService } from '../categories/categories.service';
-import { Category } from '../categories/category.entity';
 import { CreateItemDto, UpdateItemDto } from './item.dto';
 import { Item } from './item.entity';
 
@@ -8,6 +7,7 @@ import { Item } from './item.entity';
 export class ItemsService {
   constructor(
     @Inject('ITEMS_REPOSITORY') private itemsRepository: typeof Item,
+    private categoriesService: CategoriesService,
   ) {}
 
   async findAll(): Promise<Item[]> {
@@ -21,8 +21,24 @@ export class ItemsService {
   }
 
   async createItem(createItemDto: CreateItemDto): Promise<Item> {
+    const { category } = createItemDto;
+
+    let categoryId: number;
+
+    if (typeof category === 'string') {
+      const newCategory = await this.categoriesService.createCategory({
+        name: category,
+      });
+      categoryId = newCategory.id;
+    } else {
+      categoryId = category;
+    }
+
     try {
-      const item = await this.itemsRepository.create(createItemDto);
+      const item = await this.itemsRepository.create({
+        ...createItemDto,
+        categoryId,
+      });
       return item;
     } catch (error) {
       throw new NotFoundException('You need to provide a valid category');

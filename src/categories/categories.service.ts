@@ -3,7 +3,6 @@ import { CATEGORIES_REPOSITORY } from '../constants';
 import { Item } from '../items/item.entity';
 import { CreateCategoryDto } from './category.dto';
 import { Category } from './category.entity';
-//import { Category } from './category.entity';
 
 @Injectable()
 export class CategoriesService {
@@ -24,11 +23,9 @@ export class CategoriesService {
 
   findItemsGroupByCategories(): Promise<Category[]> {
     return this.categoriesRepository.findAll({
-      limit: 4,
       include: [
         {
           model: Item,
-          limit: 8,
         },
       ],
     });
