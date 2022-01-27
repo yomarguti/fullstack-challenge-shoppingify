@@ -13,7 +13,7 @@ export class Item extends Model {
   @Column
   name: string;
 
-  @Column({ type: DataType.STRING })
+  @Column({ type: DataType.TEXT })
   note?: string;
 
   @Column({ type: DataType.STRING })

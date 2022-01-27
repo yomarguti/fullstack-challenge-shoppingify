@@ -21,6 +21,7 @@ export class ItemsService {
   }
 
   async createItem(createItemDto: CreateItemDto): Promise<Item> {
+    console.log('createItemDto: ', createItemDto);
     const { category } = createItemDto;
 
     let categoryId: number;
