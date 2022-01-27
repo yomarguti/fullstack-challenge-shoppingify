@@ -2,6 +2,8 @@ import { Sequelize } from 'sequelize-typescript';
 import { Category } from '../categories/category.entity';
 import { SEQUELIZE } from '../constants';
 import { Item } from '../items/item.entity';
+import { ShopItem } from '../shopping-list/shop-item.entity';
+import { ShoppingList } from '../shopping-list/shopping-list.entity';
 
 export const databaseProviders = [
   {
@@ -16,7 +18,7 @@ export const databaseProviders = [
         database: 'shoppingify-seq',
         logging: false,
       });
-      sequelize.addModels([Item, Category]);
+      sequelize.addModels([Item, Category, ShopItem, ShoppingList]);
       await sequelize.sync();
       return sequelize;
     },
