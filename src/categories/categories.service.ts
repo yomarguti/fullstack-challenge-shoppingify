@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CATEGORIES_REPOSITORY } from '../constants';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { Item } from '../items/item.entity';
 import { CreateCategoryDto } from './category.dto';
 import { Category } from './category.entity';
@@ -7,22 +7,22 @@ import { Category } from './category.entity';
 @Injectable()
 export class CategoriesService {
   constructor(
-    @Inject(CATEGORIES_REPOSITORY)
-    private categoriesRepository: typeof Category,
+    @InjectModel(Category)
+    private categoryModel: typeof Category,
   ) {}
 
   async createCategory(
     createCategoryDto: CreateCategoryDto,
   ): Promise<Category> {
-    return await this.categoriesRepository.create(createCategoryDto);
+    return await this.categoryModel.create(createCategoryDto);
   }
 
   findAll(): Promise<Category[]> {
-    return this.categoriesRepository.findAll();
+    return this.categoryModel.findAll();
   }
 
   findItemsGroupByCategories(): Promise<Category[]> {
-    return this.categoriesRepository.findAll({
+    return this.categoryModel.findAll({
       include: [
         {
           model: Item,
@@ -32,6 +32,6 @@ export class CategoriesService {
   }
 
   findById(id: number): Promise<Category> {
-    return this.categoriesRepository.findByPk(id);
+    return this.categoryModel.findByPk(id);
   }
 }

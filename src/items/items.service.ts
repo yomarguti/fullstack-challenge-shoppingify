@@ -1,4 +1,5 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { CategoriesService } from '../categories/categories.service';
 import { CreateItemDto, UpdateItemDto } from './item.dto';
 import { Item } from './item.entity';
@@ -6,22 +7,21 @@ import { Item } from './item.entity';
 @Injectable()
 export class ItemsService {
   constructor(
-    @Inject('ITEMS_REPOSITORY') private itemsRepository: typeof Item,
+    @InjectModel(Item) private itemModel: typeof Item,
     private categoriesService: CategoriesService,
   ) {}
 
   async findAll(): Promise<Item[]> {
-    return this.itemsRepository.findAll<Item>();
+    return this.itemModel.findAll<Item>();
   }
 
   async findById(id: number): Promise<Item> {
-    const item = await this.itemsRepository.findByPk(id);
+    const item = await this.itemModel.findByPk(id);
     if (!item) throw new NotFoundException();
     return item;
   }
 
   async createItem(createItemDto: CreateItemDto): Promise<Item> {
-    console.log('createItemDto: ', createItemDto);
     const { category } = createItemDto;
 
     let categoryId: number;
@@ -36,7 +36,7 @@ export class ItemsService {
     }
 
     try {
-      const item = await this.itemsRepository.create({
+      const item = await this.itemModel.create({
         ...createItemDto,
         categoryId,
       });
@@ -47,10 +47,10 @@ export class ItemsService {
   }
 
   async updateItem(id: number, updateItemDto: UpdateItemDto): Promise<Item> {
-    const [affectedRows, [item]] = await this.itemsRepository.update(
-      updateItemDto,
-      { where: { id }, returning: true },
-    );
+    const [affectedRows, [item]] = await this.itemModel.update(updateItemDto, {
+      where: { id },
+      returning: true,
+    });
     if (!affectedRows) {
       throw new NotFoundException('You need to provide a valid category');
     }
@@ -58,7 +58,7 @@ export class ItemsService {
   }
 
   async delete(id: number): Promise<Boolean> {
-    const affected = await this.itemsRepository.destroy({ where: { id } });
+    const affected = await this.itemModel.destroy({ where: { id } });
     if (!affected) throw new NotFoundException('No item was deleted!');
 
     return true;
